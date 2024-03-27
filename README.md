@@ -59,7 +59,7 @@ This version of the library's docs focuses on use cases with the Version 3 of Fl
 
 ## Installation
 
-This library is available on npm, you can install it by running `npm install --save flutterwave-react-native` or `yarn add flutterwave-react-native`
+This library is available on npm, you can install it by running `npm install --save flutterwave-react-native-wrapper` or `yarn add flutterwave-react-native-wrapper`
 
 ### Dependencies
 
