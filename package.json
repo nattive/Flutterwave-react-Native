@@ -1,6 +1,6 @@
 {
   "name": "flutterwave-react-native",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "The official React-Native library for Flutterwave for business v2 and v3 APIs.",
   "main": "dist/index.js",
   "scripts": {

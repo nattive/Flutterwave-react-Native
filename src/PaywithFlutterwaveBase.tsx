@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import FlutterwaveInitError from './utils/FlutterwaveInitError';
 import FlutterwaveCheckout from './FlutterwaveCheckout';
 import FlutterwaveButton from './FlutterwaveButton';
-import {REDIRECT_URL} from './configs';
+import { REDIRECT_URL } from './configs';
 import { StyleProp, ViewStyle } from 'react-native';
 
 export interface CustomButtonProps {
@@ -22,6 +22,7 @@ export interface PayWithFlutterwavePropsBase {
   alignLeft?: 'alignLeft' | boolean;
   meta?: Array<any>;
   currency?: string;
+  autoInit?: boolean
 }
 
 export const PayWithFlutterwavePropTypesBase = {
@@ -32,6 +33,7 @@ export const PayWithFlutterwavePropTypesBase = {
   onDidInitialize: PropTypes.func,
   onInitializeError: PropTypes.func,
   customButton: PropTypes.func,
+  autoInit: PropTypes.bool
 };
 
 export const OptionsPropTypeBase = {
@@ -116,6 +118,12 @@ class PayWithFlutterwaveBase<P = {}> extends React.Component<
     }
   }
 
+  componentDidMount() {
+    if (this.props.autoInit) {
+      this.handleInit()
+    }
+  }
+
   componentWillUnmount() {
     if (this.abortController) {
       this.abortController.abort();
@@ -127,7 +135,7 @@ class PayWithFlutterwaveBase<P = {}> extends React.Component<
       this.abortController.abort();
     }
     // reset the necessaries
-    this.setState(({resetLink, link}) => ({
+    this.setState(({ resetLink, link }) => ({
       isPending: false,
       link: resetLink ? null : link,
       resetLink: false,
@@ -136,7 +144,7 @@ class PayWithFlutterwaveBase<P = {}> extends React.Component<
   };
 
   handleOptionsChanged = () => {
-    const {showDialog, link} = this.state;
+    const { showDialog, link } = this.state;
     if (!link) {
       return;
     }
@@ -146,11 +154,11 @@ class PayWithFlutterwaveBase<P = {}> extends React.Component<
         reference: null,
       })
     }
-    this.setState({resetLink: true})
+    this.setState({ resetLink: true })
   }
 
   handleAbort = () => {
-    const {onAbort} = this.props;
+    const { onAbort } = this.props;
     if (onAbort) {
       onAbort();
     }
@@ -158,10 +166,10 @@ class PayWithFlutterwaveBase<P = {}> extends React.Component<
   }
 
   handleRedirect = (params: any) => {
-    const {onRedirect} = this.props;
+    const { onRedirect } = this.props;
     // reset payment link
     this.setState(
-      ({resetLink, reference}) => ({
+      ({ resetLink, reference }) => ({
         reference: params.flwref || params.status === 'successful' ? null : reference,
         resetLink: params.flwref || params.status === 'successful' ? true : resetLink,
         showDialog: false,
@@ -181,10 +189,10 @@ class PayWithFlutterwaveBase<P = {}> extends React.Component<
       onDidInitialize,
       init,
     } = this.props;
-    const {isPending, reference, link} = this.state;
+    const { isPending, reference, link } = this.state;
     // just show the dialod if the link is already set
     if (link) {
-      return this.setState({showDialog: true});
+      return this.setState({ showDialog: true });
     }
     // throw error if transaction reference has not changed
     if (reference === this.props.reference) {
@@ -217,7 +225,7 @@ class PayWithFlutterwaveBase<P = {}> extends React.Component<
       try {
         // initialize payment
         const paymentLink = await init(
-          {...options, redirect_url: REDIRECT_URL},
+          { ...options, redirect_url: REDIRECT_URL },
           this.abortController
         );
         // set payment link
@@ -250,7 +258,7 @@ class PayWithFlutterwaveBase<P = {}> extends React.Component<
   };
 
   render() {
-    const {link, showDialog} = this.state;
+    const { link, showDialog } = this.state;
     return (
       <>
         {this.renderButton()}
@@ -265,8 +273,8 @@ class PayWithFlutterwaveBase<P = {}> extends React.Component<
   }
 
   renderButton() {
-    const {alignLeft, customButton, children, style} = this.props;
-    const {isPending} = this.state;
+    const { alignLeft, customButton, children, style } = this.props;
+    const { isPending } = this.state;
     if (customButton) {
       return customButton({
         disabled: isPending,
